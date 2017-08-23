@@ -64,36 +64,24 @@ Python client for Consul.io
 %autosetup -n %{library}-%{version}
 
 # Let's handle dependencies ourseleves
-# setup.py requires requirements.txt to exist
-> requirements.txt
 sed -i '/tests_require/d' setup.py
 
 # Remove bundled egg-info
 rm -rf %{library}.egg-info
 
-%if 0%{?with_python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif
-
-# aio.py is not compatible with python2 and is not supported.
-rm -rf %{module}/aio.py
-
-
 %build
 %py2_build
 %if 0%{?with_python3}
-pushd %{py3dir}
 %py3_build
-popd
 %endif
 
 %install
 %py2_install
+# aio.py is not compatible with python2 and is not supported.
+rm -rf %{buildroot}/%{python2_sitelib}/%{module}/aio.py*
+
 %if 0%{?with_python3}
-pushd %{py3dir}
 %py3_install
-popd
 %endif
 
 
@@ -101,9 +89,7 @@ popd
 %check
 %{__python2} setup.py test
 %if 0%{?with_python3}
-pushd %{py3dir}
 %{__python3} setup.py test
-popd
 %endif
 %endif
 
@@ -111,11 +97,7 @@ popd
 %license LICENSE
 %doc README.rst
 
-%{python2_sitelib}/%{module}/twisted.py*
-%{python2_sitelib}/%{module}/std.py*
-%{python2_sitelib}/%{module}/tornado.py*
-%{python2_sitelib}/%{module}/base.py*
-%{python2_sitelib}/%{module}/__init__.py*
+%{python2_sitelib}/%{module}
 %{python2_sitelib}/python_consul-%{version}-py?.?.egg-info
 
 %if 0%{?with_python3}
@@ -123,13 +105,7 @@ popd
 %license LICENSE
 %doc README.rst
 
-%{python3_sitelib}/%{module}/twisted.py
-%{python3_sitelib}/%{module}/std.py
-%{python3_sitelib}/%{module}/tornado.py
-%{python3_sitelib}/%{module}/base.py
-%{python3_sitelib}/%{module}/__init__.py
-%{python3_sitelib}/%{module}/aio.py
-%{python3_sitelib}/%{module}/__pycache__/*
+%{python3_sitelib}/%{module}
 %{python3_sitelib}/python_%{module}-%{version}-py?.?.egg-info
 %endif
 
