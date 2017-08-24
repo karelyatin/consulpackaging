@@ -1,4 +1,9 @@
 %global pypi_name treq
+
+%if 0%{?fedora}
+%global with_python3 1
+%endif
+
 # doc build disabled as it requires python-incremental(under package review)
 # https://bugzilla.redhat.com/show_bug.cgi?id=1484331
 %global with_doc 0
@@ -8,7 +13,7 @@ Version:        17.8.0
 Release:        1%{?dist}
 Summary:        A requests-like API built on top of twisted.web's Agent
 
-License:        MIT/X
+License:        MIT
 URL:            https://github.com/twisted/treq
 Source0:        https://files.pythonhosted.org/packages/source/t/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
@@ -20,12 +25,16 @@ BuildRequires:  python2-incremental
 %endif
 BuildRequires:  python2-setuptools
  
+%if 0%{?with_python3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+%endif
 
 %description
-treq is an HTTP library inspired by requests but written on top of Twisted’s Agents.
-It provides a simple, higher level API for making HTTP requests when using Twisted.
+treq is an HTTP library inspired by requests but written on top of
+Twisted’s Agents.
+It provides a simple, higher level API for making HTTP requests
+when using Twisted.
 
 %package -n     python2-%{pypi_name}
 Summary:        %{summary}
@@ -37,9 +46,12 @@ Requires:       python2-six
 Requires:       python2-twisted >= 16.3.0
 Requires:       python2-attrs
 %description -n python2-%{pypi_name}
-treq is an HTTP library inspired by requests but written on top of Twisted’s Agents.
-It provides a simple, higher level API for making HTTP requests when using Twisted.
+treq is an HTTP library inspired by requests but written on top of
+Twisted’s Agents.
+It provides a simple, higher level API for making HTTP requests
+when using Twisted.
 
+%if 0%{?with_python3}
 %package -n     python3-%{pypi_name}
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
@@ -50,8 +62,11 @@ Requires:       python3-six
 Requires:       python3-twisted >= 16.3.0
 Requires:       python3-attrs
 %description -n python3-%{pypi_name}
-treq is an HTTP library inspired by requests but written on top of Twisted’s Agents.
-It provides a simple, higher level API for making HTTP requests when using Twisted.
+treq is an HTTP library inspired by requests but written on top of
+Twisted’s Agents.
+It provides a simple, higher level API for making HTTP requests
+when using Twisted.
+%endif
 
 %if 0%{?with_doc}
 %package -n python-%{pypi_name}-doc
@@ -68,17 +83,21 @@ rm -rf %{pypi_name}.egg-info
 
 %build
 %py2_build
+%if 0%{?with_python3}
 %py3_build
+%endif
 %if 0%{?with_doc}
 # generate html docs 
-export PYTHONPATH=src
+export PYTHONPATH=%{python2_sitelib}:%{python3_sitelib}:src
 sphinx-build docs html
 # remove the sphinx-build leftovers
 rm -rf html/.{doctrees,buildinfo}
 %endif
 
 %install
+%if 0%{?with_python3}
 %py3_install
+%endif
 %py2_install
 
 
@@ -88,11 +107,13 @@ rm -rf html/.{doctrees,buildinfo}
 %{python2_sitelib}/%{pypi_name}
 %{python2_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
 
+%if 0%{?with_python3}
 %files -n python3-%{pypi_name}
 %license LICENSE
 %doc README.rst
 %{python3_sitelib}/%{pypi_name}
 %{python3_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
+%endif
 
 %if 0%{?with_doc}
 %files -n python-%{pypi_name}-doc
