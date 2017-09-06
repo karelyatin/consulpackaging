@@ -39,8 +39,7 @@ Summary:        %{summary}
 Requires:       python2-requests >= 2.0
 Requires:       python2-six >= 1.4
 Requires:       python2-tornado
-# consul's treq client not available as python-treq is not packaged yet
-#Requires:       python-treq
+Requires:       python2-treq
 %description -n python2-%{module}
 Python client for Consul.io
 
@@ -53,8 +52,7 @@ Requires:       python3-requests >= 2.0
 Requires:       python3-six >= 1.4
 Requires:       python3-aiohttp
 Requires:       python3-tornado
-# consul's treq client not available as python3-treq is not packaged yet
-#Requires:       python3-treq
+Requires:       python3-treq
 %description -n python3-%{module}
 Python client for Consul.io
 %endif
